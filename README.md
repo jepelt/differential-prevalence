@@ -8,7 +8,7 @@ This repository contains (not yet...) the code and datasets used to reproduce th
 
 ## Example analysis with MDPE
 
-The following R code demonstrates how to apply MDPE to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (N = 31) and helathy subjects (N = 29).
+The following R code demonstrates how to apply MDPE to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (CRC, N = 31) and helathy subjects (N = 29).
 
 Here, we use MDPE to estimate the differential prevalence of species between CRC cases and healthy controls while adjusting for age, BMI, sex, and sequencing depth.
 
