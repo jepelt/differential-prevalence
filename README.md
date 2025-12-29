@@ -229,3 +229,7 @@ ggplot(results |> filter(significant),
   ) +
   theme_minimal()
 ```
+
+<p align="left">
+  <img src="example_github_291225_fig.png" width="600" title="MDPE Results">
+</p>
