@@ -196,7 +196,7 @@ fit <- stan(
   iter = 400,
   warmup = 200,
   seed = 1,
-  refresh = 200 # Print progress every 200 iterations
+  refresh = 100 # Print progress every 100 iterations
 )
 ```
 
