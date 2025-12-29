@@ -1,8 +1,10 @@
 ## MDPE: Multilevel Differential Prevalence Estimator
 
-MDPE is a Bayesian hierarchical model designed for differential prevalence analysis in microbiome studies.
+MDPE is a Bayesian hierarchical model designed for differential prevalence analysis in microbiome studies. It utilizes an asymmetric Laplace prior for the differential prevalence parameters. This choice is  motivated by a natural assumption that for most taxa in most studies the true differential prevalence effects are likely close to zero, and the observation that typically, within a given microbiome study, most of the non-zero prevalence differences have the same direction.
 
-## Quick Start Example
+Unlike standard frequentist approaches (based on e.g., the Wald test), which often fail or yield infinite estimates in boundary cases (i.e., when a taxon is completely absent in one group), MDPE produces robust, finite estimates through Bayesian regularization. Furthermore, the model provides differential prevalence estimates and uncertainty intervals that are **inherently adjusted for multiplicity**.
+
+## Example analysis with MDPE
 
 The following R code demonstrates how to apply MDPE to a real microbiome dataset. The example study compares subjects with colorectal cancer (N = 31) and helathy subjects (N = 29) .
 
