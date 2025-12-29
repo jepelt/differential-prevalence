@@ -6,7 +6,7 @@ Unlike standard frequentist approaches (based on e.g., the Wald test), which oft
 
 ## Example analysis with MDPE
 
-The following R code demonstrates how to apply MDPE to a real microbiome dataset. The example study compares subjects with colorectal cancer (N = 31) and helathy subjects (N = 29) .
+The following R code demonstrates how to apply MDPE to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (N = 31) and helathy subjects (N = 29).
 
 Here, we use MDPE to estimate the differential prevalence of species between CRC cases and healthy controls while adjusting for age, BMI, sex, and sequencing depth.
 
@@ -235,3 +235,7 @@ ggplot(results |> filter(significant),
 <p align="left">
   <img src="example_github_291225_fig.png" width="600" title="MDPE Results">
 </p>
+
+## References
+
+**Thomas, A.M. et al.** Metagenomic analysis of colorectal cancer datasets identifies cross-cohort microbial diagnostic signatures and a link with choline degradation. Nat Med 25, 667–678 (2019). https://doi.org/10.1038/s41591-019-0405-7
