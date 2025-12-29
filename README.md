@@ -4,6 +4,8 @@ MDPE is a Bayesian hierarchical model designed for differential prevalence analy
 
 Unlike standard frequentist approaches (based on e.g., the Wald test), which may fail or yield infinite estimates in boundary cases (i.e., when a taxon is completely absent in one group), MDPE produces robust, finite estimates through Bayesian regularization. Furthermore, the model provides differential prevalence estimates and uncertainty intervals that are **inherently adjusted for multiplicity**.
 
+This repository contains (not yet...) the code and datasets used to reproduce the analyses and figures presented in the manuscript introducing MDPE...
+
 ## Example analysis with MDPE
 
 The following R code demonstrates how to apply MDPE to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (N = 31) and helathy subjects (N = 29).
