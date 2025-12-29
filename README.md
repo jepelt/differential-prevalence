@@ -58,7 +58,7 @@ tse <- subsetByPrevalent(tse,
                          rank = "species",
                          prevalence = prevalence_limit)
 
-# Transform to Presence/Absence (Binary)
+# Transform counts to presence/absence
 tse <- tse |> transformAssay(assay.type = "relative_abundance",
                              method = "pa")
 
