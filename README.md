@@ -239,6 +239,6 @@ ggplot(results |> filter(significant),
   <img src="example_github_291225_fig.png" width="600" title="MDPE Results">
 </p>
 
-## References
+### References
 
 **Thomas, A.M. et al.** Metagenomic analysis of colorectal cancer datasets identifies cross-cohort microbial diagnostic signatures and a link with choline degradation. Nat Med 25, 667–678 (2019). https://doi.org/10.1038/s41591-019-0405-7
