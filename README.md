@@ -186,8 +186,8 @@ stan_data_list <- list(
 
 # Posterior sampling (This may take several minutes to run!)
 # Note: The number of iterations (200/400) and chains (2) are chosen here for
-# demonstration purposes. For real analyses, consider using more iterations
-# and chains (e.g. 1000/2000 iterations and 4 chains).
+# demonstration purposes only. For real analyses, consider using more iterations
+# and chains (e.g. 1000/3000 iterations and 4 chains).
 fit <- stan(
   model_code = stan_code,
   data = stan_data_list,
