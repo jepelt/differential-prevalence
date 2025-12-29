@@ -62,33 +62,33 @@ tse <- subsetByPrevalent(tse,
 tse <- tse |> transformAssay(assay.type = "relative_abundance",
                              method = "pa")
 
-# Extract the binary matrix (Taxa x Samples) for Stan
+# Extract the presence/absence matrix
 pa_matrix <- assay(tse, "pa") 
 
 # Prepare metadata
 meta <- colData(tse) |> 
   as.data.frame() |>
   mutate(
-    # Binary Group: Control=0, Case=1
+    # Study group: Control = 0, CRC = 1
     group_bin = case_when(
       study_condition == "control" ~ 0,
       study_condition == "CRC" ~ 1
     ),
     
-    # Continuous covariates: Standardize (mean=0, sd=1) and impute NAs
+    # Continuous covariates: Standardize (mean = 0, SD = 1) and impute NAs
     age_scaled = as.numeric(scale(age)),
     age_scaled = ifelse(is.na(age_scaled), 0, age_scaled),
     
     bmi_scaled = as.numeric(scale(BMI)),
     bmi_scaled = ifelse(is.na(bmi_scaled), 0, bmi_scaled),
     
-    # Binary Covariate: Sex (Female=0, Male=1)
+    # Binary Covariate: Sex (female = 0, male = 1)
     sex_bin = case_when(
       gender == "female" ~ 0,
       gender == "male" ~ 1
     ),
     
-    # Sequencing depth: Log10 transformed and centered
+    # Sequencing depth: Log10 transform and center
     log_reads_centered = as.numeric(scale(log10(total_reads),
                                       center = TRUE,
                                       scale = FALSE))
@@ -124,8 +124,10 @@ parameters {
   vector[K] beta_bmi;
   vector[K] beta_sex;
 
-  // Hierarchical parameters for the group effect (Asymmetric Laplace)
-  vector[K] z;                    // Unscaled group effects
+  // Unscaled group effects
+  vector[K] z;
+                 
+  // Hyperparameters for the Asymmetric Laplace prior
   real <lower=0, upper=1> nu;     // Skewness of the prior
   real <lower=0> tau;             // Scale (width) of the prior
 }
@@ -137,7 +139,6 @@ transformed parameters {
 
 model {
   // --- Priors ---
-  
   // Weakly informative priors for intercepts and read depth effect
   alpha ~ normal(0, 5);
   beta_reads ~ normal(2, 2);
