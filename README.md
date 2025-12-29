@@ -221,15 +221,16 @@ ggplot(results |> filter(significant),
        aes(x = reorder(taxon, -est), y = est)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = lower_90, ymax = upper_90), width = 0.2) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
   coord_flip() +
   labs(
     title = "MDPE Results (CRC vs Control)",
     subtitle = "Adjusted for age, BMI, sex, and sequencing depth",
-    y = "Log-Odds Ratio (Posterior median ± 90% CrI)",
+    y = "Log-Odds Ratio (Posterior median, 90% CrI)",
     x = ""
   ) +
-  theme_minimal()
+  theme_minimal(base_size = 14) +
+  theme(plot.title.position = "plot")
 ```
 
 <p align="left">
