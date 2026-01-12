@@ -1,4 +1,4 @@
-## BDPE: Multilevel Differential Prevalence Estimator
+## BDPE: Bayesian Differential Prevalence Estimator
 
 BDPE is a Bayesian hierarchical model designed for differential prevalence analysis in microbiome studies. It utilizes an asymmetric Laplace prior for the differential prevalence parameters. This choice is  motivated by a natural assumption that for most taxa in most studies the true differential prevalence effects are likely close to zero, and the observation that typically, within a given microbiome study, most of the non-zero prevalence differences have the same direction.
 
