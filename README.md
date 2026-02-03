@@ -4,7 +4,7 @@ BDPE is a Bayesian hierarchical model designed for differential prevalence analy
 
 Unlike standard frequentist approaches (based on e.g., the Wald test), which may fail or yield infinite estimates in boundary cases (i.e., when a taxon is completely absent in one group), BDPE produces robust, finite estimates through Bayesian regularization. Furthermore, the model provides differential prevalence estimates and uncertainty intervals that are **inherently adjusted for multiplicity**.
 
-This repository contains (not yet...) the code and datasets used to reproduce the analyses and figures presented in the manuscript introducing BDPE...
+This repository contains the code and datasets (in the folder R) that can be used to reproduce the analyses and figures presented in the manuscript introducing BDPE...
 
 ## Example analysis with BDPE
 
