@@ -6,6 +6,7 @@ Unlike standard frequentist approaches (based on e.g., the Wald test), which may
 
 This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the manuscript introducing DiPPER...
 
+
 ## Example analysis with DiPPER
 
 The following R code demonstrates how to apply DiPPER to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (CRC, N = 31) and helathy subjects (N = 29).
