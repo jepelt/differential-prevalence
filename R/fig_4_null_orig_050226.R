@@ -19,12 +19,12 @@ load('meta_090625.rds')
 load('data_meta_taxa_090625.rds')
 
 
-results_bdpe <- res_blogrrall |>  
+results_dipper <- res_blogrrall |>  
   map(~ .$res) |> 
   bind_rows() |> 
   mutate(q = 2 * pmin(pl_pa, ph_pa),
          dir = sign(est_pa),
-         method = 'BDPE') |> 
+         method = 'DiPPER') |> 
   select(method, data_id, taxon, q, dir)
 
 results_wald <- res_wald |> 
@@ -75,7 +75,7 @@ results_linda <- res_linda |>
   select(method, data_id, taxon, q, dir)
 
 
-res <- bind_rows(results_bdpe,
+res <- bind_rows(results_dipper,
                  results_wald,
                  results_lrt,
                  results_firth,
@@ -95,7 +95,7 @@ res <- bind_rows(results_bdpe,
 rm(list = ls(pattern = 'res_'))
 rm(metas, meta_taxa)
 
-colors <- c('BDPE' = '#CD534CFF',
+colors <- c('DiPPER' = '#CD534CFF',
             'Wald' = '#EFC000FF',
             'LRT' = '#8F7700FF',
             'Firth' = '#6A3D9AFF',

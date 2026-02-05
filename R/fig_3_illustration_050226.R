@@ -46,7 +46,7 @@ res_bayes <- res_blogrrall |>
   map(~ .$res) |> 
   bind_rows() |> 
   filter(data_id %in% c(null_data, original_data)) |> 
-  mutate(method = 'BDPE') |> 
+  mutate(method = 'DiPPER') |> 
   select(method, data_id, taxon, est = est_pa, lwr = lwr90_pa, upr = upr90_pa)
 
 res_freq |> group_by(data_id) |> summarise(n = n())
@@ -64,7 +64,7 @@ res_null <- bind_rows(res_freq, res_bonf, res_bayes) |>
   filter(taxon != 'g__' & !str_detect(taxon, 'g___')) |> 
   filter(prevl != 1) |> 
   mutate(method = factor(method, 
-                         levels = c('BDPE',
+                         levels = c('DiPPER',
                                     'Frequentist (Wald)\n(unadjusted)', 
                                     'Frequentist (Wald)\n(multiplicity adjusted)')),
          taxon = str_replace(taxon, 'g__', ''),
@@ -120,7 +120,7 @@ res_orig <- bind_rows(res_freq, res_bonf, res_bayes) |>
   filter(taxon != 'g__' & !str_detect(taxon, 'g___')) |> 
   filter(prevl != 1) |> 
   mutate(method = factor(method, 
-                         levels = c('BDPE',
+                         levels = c('DiPPER',
                                     'Frequentist (Wald)\n(unadjusted)', 
                                     'Frequentist (Wald)\n(multiplicity adjusted)')),
          taxon = str_replace(taxon, 'g__', ''),

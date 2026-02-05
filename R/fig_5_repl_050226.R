@@ -19,12 +19,12 @@ load('meta_090625.rds')
 load('data_meta_taxa_090625.rds')
 
 
-results_bdpe <- res_blogrrall |>  
+results_dipper <- res_blogrrall |>  
   map(~ .$res) |> 
   bind_rows() |> 
   mutate(q = 2 * pmin(pl_pa, ph_pa),
          dir = sign(est_pa),
-         method = 'BDPE') |> 
+         method = 'DiPPER') |> 
   select(method, data_id, taxon, q, dir)
 
 results_wald <- res_wald |> 
@@ -75,7 +75,7 @@ results_linda <- res_linda |>
   select(method, data_id, taxon, q, dir)
 
 
-res <- bind_rows(results_bdpe,
+res <- bind_rows(results_dipper,
                  results_wald,
                  results_lrt,
                  results_firth,
@@ -95,7 +95,7 @@ res <- bind_rows(results_bdpe,
 rm(list = ls(pattern = 'res_'))
 rm(metas, meta_taxa)
 
-colors <- c('BDPE' = '#CD534CFF',
+colors <- c('DiPPER' = '#CD534CFF',
             'Wald' = '#EFC000FF',
             'LRT' = '#8F7700FF',
             'Firth' = '#6A3D9AFF',
@@ -108,17 +108,17 @@ colors <- c('BDPE' = '#CD534CFF',
 
 # Definition of replicated and conflicting results------------------------------
 
-dd <- tibble(taxon = paste('Taxon', c('A', 'B')),
+dd <- tibble(taxon = paste('Feature', c('A', 'B')),
              est_1 = c(1.0,  0.9),
              est_2 = c(1.5, -1.0)) |> 
   pivot_longer(cols = c(est_1, est_2), values_to = 'est') |> 
   mutate(Study = factor(name, levels = c('est_2', 'est_1'),
                         labels = c('Study 2', 'Study 1')),
-         Taxon = fct_rev(taxon),
+         Feature = fct_rev(taxon),
          lwr = est - ifelse(Study == 'Study 1', 0.60, 0.60),
          upr = est + ifelse(Study == 'Study 1', 0.60, 0.60))
 
-dt <- tibble(Taxon = paste('Taxon', c('A', 'B')),
+dt <- tibble(Feature = paste('Feature', c('A', 'B')),
              est = c(2.4, 2.4),
              lbl = c('Replicated', 'Conflicting'))
 
@@ -232,14 +232,14 @@ res_sep_2 <- bind_rows(resl_sep_2) |>
          method = factor(
            method,
            levels = c('Wald', 'MaAsLin3-DP', 'LinDA (DA)', 'LDM-DP',
-                      'Firth', 'MaAsLin2 (DA)', 'LRT', 'BDPE')))
+                      'Firth', 'MaAsLin2 (DA)', 'LRT', 'DiPPER')))
 
 
 # Subfigures--------------------------------------------------------------------
 
 or_breaks <- c(0.2, 0.5, 1, 2, 5)
 
-p1 <- ggplot(dd, aes(est, Taxon, color = Study)) +
+p1 <- ggplot(dd, aes(est, Feature, color = Study)) +
   geom_point(size = 2.0,
              position = position_dodge(width = .50)) +
   geom_errorbarh(aes(xmin = lwr, xmax = upr), height = 0,
@@ -255,7 +255,7 @@ p1 <- ggplot(dd, aes(est, Taxon, color = Study)) +
     labels = or_breaks
   ) +
   labs(x = 'Differential prevalence (OR)',
-       y = 'Taxon', 
+       y = 'Feature', 
        color = 'Study') +
   coord_cartesian(xlim = c(-1.9, 3.9)) +
   
@@ -270,7 +270,7 @@ p1 <- ggplot(dd, aes(est, Taxon, color = Study)) +
         legend.key.height = unit(2.0, 'mm'),
         legend.box.background = element_rect(colour = "black"),
         legend.text = element_text(size = 8),
-        plot.margin = margin(t = 30, r = 15, b = 5.5, l = 8.5))
+        plot.margin = margin(t = 30, r = 15, b = 5.5, l = 2.5))
 
 
 log10p <- function(x) log10(x + 1)

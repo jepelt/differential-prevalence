@@ -1,16 +1,16 @@
-## BDPE: Bayesian Differential Prevalence Estimator
+## DiPPER - Differential Prevalence via Probabilistic Estimation in R
 
-BDPE is a Bayesian hierarchical model designed for differential prevalence analysis in microbiome studies. It utilizes an asymmetric Laplace prior for the differential prevalence parameters. This choice is  motivated by a natural assumption that for most taxa in most studies the true differential prevalence effects are likely close to zero, and the observation that typically, within a given microbiome study, most of the non-zero prevalence differences have the same direction.
+DiPPER is a Bayesian hierarchical model designed for differential prevalence analysis in microbiome studies. It utilizes an asymmetric Laplace prior for the differential prevalence parameters. This choice is  motivated by a natural assumption that for most taxa in most studies the true differential prevalence effects are likely close to zero, and the observation that typically, within a given microbiome study, most of the non-zero prevalence differences have the same direction.
 
-Unlike standard frequentist approaches (based on e.g., the Wald test), which may fail or yield infinite estimates in boundary cases (i.e., when a taxon is completely absent in one group), BDPE produces robust, finite estimates through Bayesian regularization. Furthermore, the model provides differential prevalence estimates and uncertainty intervals that are **inherently adjusted for multiplicity**.
+Unlike standard frequentist approaches (based on e.g., the Wald test), which may fail or yield infinite estimates in boundary cases (i.e., when a taxon is completely absent in one group), DiPPER produces robust, finite estimates through Bayesian regularization. Furthermore, the model provides differential prevalence estimates and uncertainty intervals that are **inherently adjusted for multiplicity**.
 
-This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the manuscript introducing BDPE...
+This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the manuscript introducing DiPPER...
 
-## Example analysis with BDPE
+## Example analysis with DiPPER
 
-The following R code demonstrates how to apply BDPE to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (CRC, N = 31) and helathy subjects (N = 29).
+The following R code demonstrates how to apply DiPPER to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (CRC, N = 31) and helathy subjects (N = 29).
 
-Here, we use BDPE to estimate the differential prevalence of species between CRC cases and healthy controls while adjusting for age, BMI, sex, and sequencing depth.
+Here, we use DiPPER to estimate the differential prevalence of species between CRC cases and healthy controls while adjusting for age, BMI, sex, and sequencing depth.
 
 ### Prerequisites
 
@@ -96,7 +96,7 @@ meta <- colData(tse) |>
   select(group_bin, age_scaled, bmi_scaled, sex_bin, log_reads_centered)
 ```
 
-### Stan code for the BDPE model
+### Stan code for the DiPPER model
 ```
 stan_code <- "
 data {
@@ -171,7 +171,7 @@ model {
 "
 ```
 
-### Run the BDPE model
+### Run the DiPPER model
 ```
 # Create the data list for Stan
 stan_data_list <- list(
@@ -227,7 +227,7 @@ ggplot(results |> filter(significant),
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
   coord_flip() +
   labs(
-    title = "BDPE Results (CRC vs Control)",
+    title = "DiPPER Results (CRC vs Control)",
     subtitle = "Adjusted for age, BMI, sex, and sequencing depth",
     y = "Log-Odds Ratio (Posterior median, 90% CrI)",
     x = ""
@@ -237,7 +237,7 @@ ggplot(results |> filter(significant),
 ```
 
 <p align="left">
-  <img src="example_github_291225_fig.png" width="600" title="BDPE Results">
+  <img src="example_github_291225_fig.png" width="600" title="DiPPER Results">
 </p>
 
 ### References
