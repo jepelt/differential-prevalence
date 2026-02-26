@@ -4,7 +4,7 @@ DiPPER is a Bayesian hierarchical model designed for differential prevalence ana
 
 Unlike standard frequentist approaches (based on e.g., the Wald test), which may fail or yield infinite estimates in boundary cases (i.e., when a taxon is completely absent in one group), DiPPER produces robust, finite estimates through Bayesian regularization. Furthermore, the model provides differential prevalence estimates and uncertainty intervals that are inherently adjusted for multiplicity.
 
-This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the manuscript introducing DiPPER...
+This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the paper introducing DiPPER (see a pre-print [here](https://arxiv.org/abs/2602.05938)).
 
 
 ## Example analysis with DiPPER
