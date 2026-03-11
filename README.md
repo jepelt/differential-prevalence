@@ -7,7 +7,7 @@ Technically, DiPPER utilizes a common asymmetric Laplace prior (whose variance a
 This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the paper introducing DiPPER (see a pre-print [here](https://arxiv.org/abs/2602.05938)).
 
 
-## Example analysis with DiPPER (Updated March 11, 2026)
+## Example analysis with DiPPER
 
 The following R code demonstrates how to apply DiPPER to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (CRC, N = 31) and helathy subjects (N = 29).
 
@@ -200,18 +200,27 @@ mod <- cmdstan_model(write_stan_file(stan_code, dir = "."))
 # Define the initialization function to provide reasonable starting values for
 # the parameters.
 init_fun <- function() {
+  beta_cov_init <- matrix(
+    rnorm((stan_data_list$P - 1) * stan_data_list$K, mean = 0, sd = 0.5), 
+    nrow = stan_data_list$P - 1, 
+    ncol = stan_data_list$K
+  )
+  if (stan_data_list$P > 1) {
+    beta_cov_init[1, ] <- rnorm(stan_data_list$K, mean = 1, sd = 0.5)
+  }
+  
   list(
-    alpha = rep(-1, stan_data_list$K),
-    beta_cov = matrix(0, nrow = stan_data_list$P - 1, ncol = stan_data_list$K),
-    z_norm = rep(0, stan_data_list$K),
-    z_exp = rep(1, stan_data_list$K),
-    nu = 0.5,
-    tau = 0.1
+    alpha = rnorm(stan_data_list$K, mean = -1, sd = 1),
+    beta_cov = beta_cov_init,
+    z_norm = rnorm(stan_data_list$K, mean = 0, sd = 0.5),
+    z_exp = runif(stan_data_list$K, min = 0.5, max = 1.5),
+    nu = runif(1, min = 0.4, max = 0.6),
+    tau = runif(1, min = 0.05, max = 0.2)
   )
 }
 
 # Run posterior sampling
-# This should take less than 2 minutes on a standard laptop.
+# This should take 1 - 2 minutes on a standard laptop (with 4 CPU cores).
 # Note: 500 - 1000 warmup and sampling iterations per chain are typically
 # sufficient for convergence for DiPPER.
 # Note 2: The printed messages "The current Metropolis proposal..." or
