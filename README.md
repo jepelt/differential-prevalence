@@ -7,7 +7,7 @@ Technically, DiPPER utilizes a common asymmetric Laplace prior (whose variance a
 This repository contains the code and datasets (located in the R folder) for reproducing the analyses and figures in the paper introducing DiPPER (see a pre-print [here](https://arxiv.org/abs/2602.05938)).
 
 
-## Example analysis with DiPPER
+## Example analysis with DiPPER (Updated March 11, 2026)
 
 The following R code demonstrates how to apply DiPPER to a real microbiome dataset (Thomas et al., 2019). The example study compares subjects with colorectal cancer (CRC, N = 31) and helathy subjects (N = 29).
 
