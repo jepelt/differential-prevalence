@@ -191,51 +191,29 @@ model {
 ### Run DiPPER
 ```
 # Compile the Stan model
-# This creates a compiled model object in your project folder. This may take
-# around 30 s to 1 min. But this needs to be done only once (in the same folder)!
+# This creates a compiled model files (stan_dipper) in your project folder.
+# This may take ~1 min. But this needs to be done only once (in the same folder)!
 # Note: The compilation process will print several lines of C++ compiler messages 
-# and warnings to your console. These can be safely ignored, however.
-mod <- cmdstan_model(write_stan_file(stan_code, dir = "."))
-
-# Define the initialization function to provide reasonable starting values for
-# the parameters.
-init_fun <- function() {
-  beta_cov_init <- matrix(
-    rnorm((stan_data_list$P - 1) * stan_data_list$K, mean = 0, sd = 0.5), 
-    nrow = stan_data_list$P - 1, 
-    ncol = stan_data_list$K
-  )
-  if (stan_data_list$P > 1) {
-    beta_cov_init[1, ] <- rnorm(stan_data_list$K, mean = 1, sd = 0.5)
-  }
-  
-  list(
-    alpha = rnorm(stan_data_list$K, mean = -1, sd = 1),
-    beta_cov = beta_cov_init,
-    z_norm = rnorm(stan_data_list$K, mean = 0, sd = 0.5),
-    z_exp = runif(stan_data_list$K, min = 0.5, max = 1.5),
-    nu = runif(1, min = 0.4, max = 0.6),
-    tau = runif(1, min = 0.05, max = 0.2)
-  )
-}
+# and warnings to your console, but these can be safely ignored.
+mod <- cmdstan_model(write_stan_file(stan_code,
+                                     dir = ".",
+                                     basename = "stan_dipper"))
 
 # Run posterior sampling
 # This should take 1 - 2 minutes on a standard laptop (with 4 CPU cores).
 # Note: 500 - 1000 warmup and sampling iterations per chain are typically
 # sufficient for convergence for DiPPER.
-# Note 2: The printed messages "The current Metropolis proposal..." or
-# "Exception: bernoulli_logit_glm_lpmf: Weight vector[1] is ..." can be
-# ignored.
 fit <- mod$sample(
   data = stan_data_list,
   seed = 1,
   chains = 4,            # Number of Markov chains
   parallel_chains = 4,   # Use 4 here if you have at least 4 CPU cores available
-  init = init_fun,
   iter_warmup = 700,     # Number of warmup iterations (per chain)
   iter_sampling = 700,   # Number of sampling iterations (per chain)
   adapt_delta = 0.8,
-  max_treedepth = 10
+  max_treedepth = 10,
+  save_cmdstan_config = TRUE,
+  show_exceptions = FALSE
 )
 ```
 
@@ -288,7 +266,7 @@ ggplot(results |> filter(significant),
   coord_flip() +
   labs(
     title = "DiPPER Results (CRC vs Control)",
-    subtitle = "Adjusted for age, BMI, sex, and sequencing depth",
+    subtitle = "Adjusted for age, BMI, sex, and sequencing depth. Only 'significant' results are shown.",
     y = "Odds Ratio (Posterior median, 90% CrI)",
     x = ""
   ) +
