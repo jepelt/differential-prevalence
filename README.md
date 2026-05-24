@@ -27,7 +27,7 @@ created an additional file), and the `data_10...R` scripts were used to split
 the large data objects into smaller files to enable parallel benchmarking on
 the CSC cluster.
 
-### Benchmarking DiPPER
+### Running DiPPER
 The script `run_dipper_default_110526.R` was used to run the default version of
 DiPPER on the benchmarking datasets. These computations were executed on the
 CSC (IT Center for Science Ltd) high-performance computing cluster. The results
