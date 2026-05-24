@@ -1,0 +1,275 @@
+library(tidyverse)
+library(ggrepel)
+library(ggbeeswarm)
+library(patchwork)
+library(latex2exp)
+
+
+load('res_dipper_default_110526.rds')
+load('res_dipper_symmetric_110526.rds')
+load('res_dipper_s1_110526.rds')
+load('res_dipper_s2_110526.rds')
+load('res_dipper_s3_110526.rds')
+load('res_blinrall_301225.rds')
+load('res_maaslin2_250126.rds')
+
+load('data_expl_studies.rds')
+load('meta_090625.rds')
+load('data_meta_taxa_090625.rds')
+
+
+results_dipper_default <- res_dipper_default |>  
+  map(~ .$res_beta) |> 
+  bind_rows() |> 
+  mutate(q = 2 * pmin(prob_low, prob_hi),
+         q = ifelse(is.na(q), 1, q),
+         dir = sign(est),
+         dir = ifelse(is.na(dir), 0, dir),
+         method = 'DiPPER-Default') |> 
+  select(method, data_id, taxon, q, dir)
+
+results_dipper_symmetric <- res_dipper_symmetric |>  
+  map(~ .$res_beta) |> 
+  bind_rows() |> 
+  mutate(q = 2 * pmin(prob_low, prob_hi),
+         q = ifelse(is.na(q), 1, q),
+         dir = sign(est),
+         dir = ifelse(is.na(dir), 0, dir),
+         method = 'DiPPER-Symmetric') |> 
+  select(method, data_id, taxon, q, dir)
+
+results_dipper_s1 <- res_dipper_s1 |>  
+  map(~ .$res_beta) |> 
+  bind_rows() |> 
+  mutate(q = 2 * pmin(prob_low, prob_hi),
+         q = ifelse(is.na(q), 1, q),
+         dir = sign(est),
+         dir = ifelse(is.na(dir), 0, dir),
+         method = 'DiPPER-Free-Skew') |> 
+  select(method, data_id, taxon, q, dir)
+
+results_dipper_s2 <- res_dipper_s2 |>  
+  map(~ .$res_beta) |> 
+  bind_rows() |> 
+  mutate(q = 2 * pmin(prob_low, prob_hi),
+         q = ifelse(is.na(q), 1, q),
+         dir = sign(est),
+         dir = ifelse(is.na(dir), 0, dir),
+         method = 'DiPPER-Narrow') |> 
+  select(method, data_id, taxon, q, dir)
+
+results_dipper_s3 <- res_dipper_s3 |>  
+  map(~ .$res_beta) |> 
+  bind_rows() |> 
+  mutate(q = 2 * pmin(prob_low, prob_hi),
+         q = ifelse(is.na(q), 1, q),
+         dir = sign(est),
+         dir = ifelse(is.na(dir), 0, dir),
+         method = 'DiPPER-Wide') |> 
+  select(method, data_id, taxon, q, dir)
+
+
+results_bmaaslin2 <- res_blinrall |>  
+  map(~ .$res) |> 
+  bind_rows() |> 
+  mutate(q = 2 * pmin(pl_pa, ph_pa),
+         dir = sign(est_pa),
+         method = 'BMaAsLin2 (DA)') |> 
+  select(method, data_id, taxon, q, dir)
+
+
+results_maaslin2 <- res_maaslin2 |> 
+  bind_rows() |> 
+  mutate(dir = sign(est),
+         method = 'MaAsLin2 (DA)') |> 
+  select(method, data_id, taxon, q, dir)
+
+
+res <- bind_rows(results_dipper_default,
+                 results_dipper_symmetric,
+                 results_dipper_s1,
+                 results_dipper_s2,
+                 results_dipper_s3,
+                 results_bmaaslin2,
+                 results_maaslin2) |>
+  dplyr::left_join(metas, by = c('data_id')) |>
+  dplyr::left_join(meta_taxa, by = c('data_id', 'taxon')) |>
+  mutate(disease = ifelse(disease == 'EDD', 'CDI', disease),
+         method = factor(method,
+                         levels = c('DiPPER-Default', 'DiPPER-Wide', 'DiPPER-Narrow',
+                                    'DiPPER-Symmetric', 'DiPPER-Free-Skew',
+                                    'BMaAsLin2 (DA)', 'MaAsLin2 (DA)'))) |> 
+  filter(body_site == 'stool') |> 
+  select(method, data_id, taxon, q, dir, seq_type,
+         disease, study, median_reads, n, n_control, n_case)
+
+colors <- c('DiPPER-Default' = '#CD534CFF',
+            'DiPPER-Wide' = '#EFC000FF',
+            'DiPPER-Narrow' = '#6A3D9AFF',
+            'DiPPER-Symmetric' = '#8F7700FF',
+            'DiPPER-Free-Skew' = '#0073C2FF',
+            'BMaAsLin2 (DA)' = '#00A087FF',
+            'MaAsLin2 (DA)' = 'black')
+
+rm(list = ls(pattern = 'res_'))
+rm(list = ls(pattern = 'results_'))
+rm(metas, meta_taxa)
+
+sl <- 0.10
+
+
+# Null data results ------------------------------------------------------------
+glm_ci <- function(x, n) {
+  prop.test(x, n, conf.level = 0.90)$conf.int |> as.numeric()
+}
+
+res_null <- res |> 
+  filter(str_detect(data_id, 'null')) |> 
+  filter(!is.na(q)) |>
+  mutate(sgn = q < sl) |> 
+  group_by(method, data_id) |> 
+  summarize(s = sum(sgn),
+            t = n(),
+            .groups = 'drop') |> 
+  group_by(method) |>
+  summarize(fdr = mean(s > .5),
+            ci_lower = glm_ci(sum(s > .5), n()) [1],
+            ci_upper = glm_ci(sum(s > .5), n()) [2],
+            n_datasets = n(),
+            .groups = 'drop')
+
+
+res_null_w <- res |> 
+  filter(str_detect(data_id, 'null')) |> 
+  filter(!is.na(q)) |>
+  mutate(sgn = q < sl) |> 
+  group_by(method, data_id) |> 
+  summarize(s = sum(sgn),
+            .groups = 'drop') |> 
+  ungroup() |> 
+  pivot_wider(names_from = method, values_from = s)
+
+res_null_wm <- res |> 
+  filter(str_detect(data_id, 'null')) |> 
+  filter(!is.na(q)) |>
+  mutate(sgn = q < sl) |> 
+  group_by(method, data_id) |> 
+  summarize(m = round(mean(sgn), 3),
+            .groups = 'drop') |> 
+  ungroup() |> 
+  pivot_wider(names_from = method, values_from = m)
+
+
+
+# Original datasets results ----------------------------------------------------
+res_orig <- res |> 
+  filter(str_detect(data_id, 'original')) |> 
+  filter(!is.na(q)) |>
+  mutate(sgn = q < sl) |> 
+  group_by(data_id, method) |> 
+  summarize(s0 = sum(sgn), .groups = 'drop')
+
+res_orig_summary <- res_orig |> 
+  group_by(method) |> 
+  summarize(md_s0 = median(s0),
+            m_s0 = mean(s0),
+            q75_s0 = quantile(s0, .75),
+            .groups = 'drop')
+
+
+# Create figure ----------------------------------------------------------------
+
+# Panel a: Scatter plot
+d_scatter <- left_join(res_null, res_orig_summary, by = "method") |> 
+  mutate(alpha_point = case_when(method == "DiPPER-Default" ~ 1.0,
+                                 TRUE ~ 0.7)) |> 
+  arrange(method == "DiPPER-Default")
+
+(p_scatter <- ggplot(d_scatter, aes(x = fdr, y = md_s0, color = method)) +
+    geom_vline(xintercept = 0, linetype = 'solid', color = 'gray40',
+               linewidth = .2) +
+    geom_hline(yintercept = 0, linetype = 'solid', color = 'gray40',
+               linewidth = .2) +
+    geom_vline(xintercept = 0.10, linetype = 'dashed', color = 'gray40') +
+    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper),
+                   height = 0, 
+                   linewidth = .7, 
+                   alpha = 0.7) +
+    geom_point(size = 4, color = "white", alpha = 1) +
+    geom_point(aes(alpha = alpha_point), size = 4) +
+    geom_text_repel(aes(label = method),
+                    fontface = 'plain',
+                    size = 3.5, 
+                    box.padding = 0.6,   
+                    point.padding = 0.5,
+                    force = 10,          
+                    min.segment.length = 0,
+                    show.legend = FALSE,
+                    color = "black") +
+    scale_color_manual(values = colors) +
+    scale_x_continuous(breaks = seq(0, 0.25, 0.05), limits = c(0, 0.22)) +
+    scale_y_continuous(breaks = seq(0, 30, 2), limits = c(0, 13)) +
+    scale_alpha_identity() +
+    labs(x = TeX("Null data error rate ($\\lambda$)"),
+         y = 'Median number of significant findings') +
+    theme_classic(base_size = 11) +
+    theme(legend.position = 'none',
+          axis.title = element_text(size = 11,
+                                    margin = margin(t = 0, r = 1, b = 0, l = 0)),
+          axis.text = element_text(size = 10))
+)
+
+
+
+# Panel b: Distribution of significant findings
+md_q75 <- function(x) {
+  median(x) + .001 * quantile(x, 0.75)
+}
+
+d_distr <- res_orig |> 
+  ungroup() |> 
+  mutate(method = fct_reorder(method, s0, .fun = md_q75))
+
+
+log10p <- function(x) log10(x + 1)
+
+(p_distr <- ggplot(d_distr, aes(method, log10p(s0), color = method)) + 
+    ggbeeswarm::geom_quasirandom(size = 1.2, alpha = .3, width = 0.3,
+                                 bandwidth = 0.5) +
+    geom_boxplot(alpha = .0, outlier.shape = NA, width = 0.6) +
+    
+    scale_y_continuous(breaks = log10p(c(0, 1, 3, 10, 30, 100, 300)),
+                       labels = c('0', '1', '3', '10', '30', '100', '300')) +
+    scale_color_manual(values = colors) +
+    labs(y = 'Number of significant findings') +
+    theme_classic(base_size = 11) +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
+          axis.title.y = element_text(size = 11,
+                                      margin = margin(t = 0, r = 1, b = 0, l = 0)),
+          axis.text.y = element_text(size = 10),
+          legend.position = 'none')
+)
+
+
+# Combine panels
+(p_final <- free(p_scatter, type = "label") + free(p_distr, type = "label") +
+    plot_layout(widths = c(1.0, 0.75)) +
+    plot_annotation(tag_levels = 'a') &
+    theme(plot.tag = element_text(face = "bold"),
+          plot.margin = margin(t = 1, r = 1, b = -4, l = 1, unit = "mm"))
+)
+
+date <- format(Sys.Date(), "%d%m%y")
+ggsave(plot = p_final,
+       filename = paste0('fig_s3_alt_prior_', date, '.png'),
+       width = 170, height = 120, dpi = 300, unit = 'mm', 
+       bg = 'white')
+
+
+#-------------------------------------------------------------------------------
+(res_fig_2 <- res_orig_summary |> 
+   left_join(res_null, by = 'method')
+)
+
+writexl::write_xlsx(res_fig_2, paste0('res_fig_s3_alt_prior_', date, '.xlsx'))
