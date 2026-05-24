@@ -1,25 +1,18 @@
-# DiPPER - Differential Prevalence via Probabilistic Estimation in R
+# Benchmarking DiPPER
 
-DiPPER is a Bayesian hierarchical approach designed for differential prevalence
-analysis in microbiome studies. Unlike standard frequentist approaches (based
-on e.g., the Wald test), which may fail or yield infinite estimates in boundary
-cases (e.g., when a taxon is completely absent in one group), DiPPER produces
-robust, finite estimates through hierarchical shrinkage. Furthermore, DiPPER
-provides differential prevalence estimates and uncertainty intervals that are
-inherently adjusted for multiplicity.
+This repository contains the code and datasets required to reproduce the
+analyses and figures in the manuscript introducing DiPPER (preprint available
+[here](https://arxiv.org/abs/2602.05938)).
 
-Technically, DiPPER utilizes a common asymmetric Laplace prior (whose variance
-and skewness are determined by the data) for the differential prevalence
-parameters. This choice is motivated by a natural assumption that for most taxa
-in most studies the true differential prevalence effects are likely close to
-zero, and the observation that typically, within a given microbiome study, most
-of the non-zero prevalence differences have the same direction.
+**Note:** The development version of the **DiPPER** R package itself is hosted
+in a separate repository
+([https://github.com/jepelt/DiPPER](https://github.com/jepelt/DiPPER)),
+which includes an installation guide and a usage example.
 
-This repository contains the code and datasets (located in the `R` folder) for
-reproducing the analyses and figures in the paper introducing DiPPER (see a
-pre-print [here](https://arxiv.org/abs/2602.05938)).
+## Reproducing the Paper Analyses
 
-## Reproducing the paper analyses
+All the code and datasets used for benchmarking in the paper are located in
+the `R` folder.
 
 ### Data processing
 Raw data was processed using the `data_tses_16s_030625.R` and
@@ -56,59 +49,3 @@ The benchmarking results and Figures 3–5 presented in the Results section of
 the paper can be generated using the corresponding `fig_[FIGURE_NUMBER]...R`
 scripts. The scripts to generate the figures in the Supplementary Material of
 the manuscript are named `fig_s[FIGURE_NUMBER]...R`.
-
-## Installation of DiPPER and example usage
-
-You can install the development version of DiPPER from GitHub using:
-
-```r
-# install.packages("remotes")
-remotes::install_github("jepelt/DiPPER")
-```
-
-DiPPER also requires the `cmdstanr` package.
-
-```r
-install.packages("cmdstanr",
-                 repos = c("(https://stan-dev.r-universe.dev/)",
-                           getOption("repos")))
-
-# Set up the C++ toolchain (Windows users may need Rtools)
-cmdstanr::check_cmdstan_toolchain(fix = TRUE)
-
-# Install the Stan backend (only needs to be done once)
-cmdstanr::install_cmdstan()
-```
-
-### Example usage
-
-Below is a simple example workflow using the example data included in the
-package.
-
-```r
-library(DiPPER)
-
-# Load example data (TreeSummarizedExperiment object)
-# This dataset compares (N = 20 + 20) rats on a High/Low fat diet.
-data("tse_hintikka")
-
-# Run DiPPER. 
-# The first term in the formula (here: Fat) is automatically 
-# used as the variable of interest. XOS (xylo-oligosaccharide supplementation)
-# is included as a covariate to adjust for.
-# Note: When using DiPPER for the first time, it may take around two minutes
-# to run the function due to the compilation of the Stan model.
-
-fit <- DiPPER(
-  tse = tse_hintikka,
-  formula = ~ Fat + XOS,
-  tax_rank = "Genus",
-  seed = 1
-)
-
-# Extract summarized results as a data.frame
-res <- summary(fit)
-
-# Create a forest plot (showing only 'significant' taxa)
-plot(fit, show_taxa = "significant")
-```

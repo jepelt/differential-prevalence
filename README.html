@@ -352,29 +352,18 @@ display: none;
 </div>
 
 
-<div id="dipper---differential-prevalence-via-probabilistic-estimation-in-r" class="section level1">
-<h1>DiPPER - Differential Prevalence via Probabilistic Estimation in
-R</h1>
-<p>DiPPER is a Bayesian hierarchical model designed for differential
-prevalence analysis in microbiome studies. Unlike standard frequentist
-approaches (based on e.g., the Wald test), which may fail or yield
-infinite estimates in boundary cases (e.g., when a taxon is completely
-absent in one group), DiPPER produces robust, finite estimates through
-Bayesian regularization. Furthermore, the model provides differential
-prevalence estimates and uncertainty intervals that are inherently
-adjusted for multiplicity.</p>
-<p>Technically, DiPPER utilizes a common asymmetric Laplace prior (whose
-variance and skewness are determined by the data) for the differential
-prevalence parameters. This choice is motivated by a natural assumption
-that for most taxa in most studies the true differential prevalence
-effects are likely close to zero, and the observation that typically,
-within a given microbiome study, most of the non-zero prevalence
-differences have the same direction.</p>
-<p>This repository contains the code and datasets (located in the
-<code>R</code> folder) for reproducing the analyses and figures in the
-paper introducing DiPPER (see a pre-print <a href="https://arxiv.org/abs/2602.05938">here</a>).</p>
+<div id="reproducing-the-analyses-for-dipper" class="section level1">
+<h1>Reproducing the analyses for DiPPER</h1>
+<p>This repository contains the code and datasets required to reproduce
+the analyses and figures in the manuscript introducing DiPPER (preprint
+available <a href="https://arxiv.org/abs/2602.05938">here</a>).</p>
+<p><strong>Note:</strong> The <strong>DiPPER</strong> R package itself
+is hosted in a separate repository. If you are looking to install and
+use DiPPER for your own data, please visit: <a href="https://github.com/jepelt/DiPPER">https://github.com/jepelt/DiPPER</a>.</p>
 <div id="reproducing-the-paper-analyses" class="section level2">
-<h2>Reproducing the paper analyses</h2>
+<h2>Reproducing the Paper Analyses</h2>
+<p>All the code and datasets used for benchmarking in the paper are
+located in the <code>R</code> folder.</p>
 <div id="data-processing" class="section level3">
 <h3>Data processing</h3>
 <p>Raw data was processed using the <code>data_tses_16s_030625.R</code>
@@ -396,6 +385,10 @@ the default version of DiPPER on the benchmarking datasets. These
 computations were executed on the CSC (IT Center for Science Ltd)
 high-performance computing cluster. The results from running DiPPER are
 saved in the file <code>res_dipper_default_110526.rds</code>.</p>
+<p>Versions of DiPPER with alternative hyperprior settings were run
+using the <code>run_dipper_symmetric/s1/s2/s3_110526.R</code> scripts,
+and the corresponding results are stored in the files
+<code>res_dipper_symmetric/s1/s2/s3_110526.rds</code>.</p>
 </div>
 <div id="running-the-competing-methods" class="section level3">
 <h3>Running the competing methods</h3>
@@ -403,7 +396,9 @@ saved in the file <code>res_dipper_default_110526.rds</code>.</p>
 using their respective <code>run_[METHOD_NAME]...R</code> scripts. As an
 exception, LDM was run on the CSC cluster using the script
 <code>run_ldm_120525_csc_updated.R</code>, and the results are stored in
-<code>res_ldm_120526.rds</code>.</p>
+<code>res_ldm_120526.rds</code>. Moreover, the “Bayesian” MaAsLin2 was
+run using the <code>run_blinrall_301225.r</code> script (which utilizes
+the Stan code <code>stan_blinrall_301225.stan</code>).</p>
 </div>
 <div id="summarizing-results-and-creating-figures" class="section level3">
 <h3>Summarizing results and creating figures</h3>
@@ -412,14 +407,14 @@ section of the paper can be generated using the corresponding
 <code>fig_[FIGURE_NUMBER]...R</code> scripts. The scripts to generate
 the figures in the Supplementary Material of the manuscript are named
 <code>fig_s[FIGURE_NUMBER]...R</code>.</p>
+<hr />
 </div>
 </div>
 <div id="installation-of-dipper-and-example-usage" class="section level2">
 <h2>Installation of DiPPER and example usage</h2>
 <p>You can install the development version of DiPPER from GitHub
 using:</p>
-<pre class="r"><code># install.packages(&quot;remotes&quot;)
-remotes::install_github(&quot;jepelt/DiPPER&quot;)</code></pre>
+<pre class="r"><code>remotes::install_github(&quot;jepelt/DiPPER&quot;)</code></pre>
 <p>DiPPER also requires the <code>cmdstanr</code> package.</p>
 <pre class="r"><code>install.packages(&quot;cmdstanr&quot;,
                  repos = c(&quot;(https://stan-dev.r-universe.dev/)&quot;,
