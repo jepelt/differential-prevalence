@@ -17,7 +17,8 @@ the `R` folder.
 ### Data processing
 Raw data was processed using the `data_tses_16s_030625.R` and
 `data_tses_sg_030625.R` scripts. The raw data files for the 16S data can be
-downloaded from [Zenodo](https://zenodo.org/records/1146764).
+downloaded from [Zenodo](https://zenodo.org/records/1146764) (the shotgun data
+are from the `curatedMetagenomicData` R package).
 
 The processed data are stored in the files `data_tses_16s_030625.rds` and
 `data_tses_sg_030625.rds` as lists of `TreeSummarizedExperiment` objects.
