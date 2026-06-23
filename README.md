@@ -13,7 +13,7 @@ To reproduce the benchmarking results with the scripts given in this repository,
 devtools::install_github("jepelt/DiPPER@v0.1.0-preprint-v2")
 ```
 
-**Note:** The current development version of DiPPER (with slightly altered argument names and the added possibility to model longitudinal data) can be found in the main repository [here](https://github.com/jepelt/DiPPER).
+**Note:** The active development version of DiPPER can be found [here](https://github.com/jepelt/DiPPER). While the core statistical method remains identical and yields the same results, the newer version has certain cosmetic improvements (regarding e.g. usability) and the added capability to model longitudinal data.
 
 ## Reproducing the Paper Analyses
 
