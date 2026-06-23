@@ -4,10 +4,16 @@ This repository contains the code and datasets required to reproduce the
 analyses and figures in the manuscript introducing DiPPER (preprint available
 [here](https://arxiv.org/abs/2602.05938)).
 
-**Note:** The development version of the **DiPPER** R package itself is hosted
-in a separate repository
-([https://github.com/jepelt/DiPPER](https://github.com/jepelt/DiPPER)),
-which includes an installation guide and a usage example.
+## Installing DiPPER
+
+To reproduce the benchmarking results with the scripts given in this repository, you must install the specific earlier version of DiPPER using the following code:
+
+```R
+# Install the exact version used for benchmarking
+devtools::install_github("jepelt/DiPPER@v0.1.0-preprint-v2")
+```
+
+**Note:** The current development version of DiPPER (with slightly altered argument names and the added possibility to model longitudinal data) can be found in the main repository [here](https://github.com/jepelt/DiPPER).
 
 ## Reproducing the Paper Analyses
 
